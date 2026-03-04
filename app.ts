@@ -7,6 +7,7 @@ import { profileRouter } from "./src/modules/profile/Profile.route";
 import { tutorProfileRouter } from "./src/modules/TutorProfil/Tutor.Route";
 import { availabilityRouter } from "./src/modules/Availability/Availabilty.route";
 import { bookingRouter } from "./src/modules/Booking/Booking.route";
+import { prisma } from "./lib/prisma";
 const app = express();
 
 app.use(cors());
@@ -17,11 +18,22 @@ app.all("/api/auth/*", toNodeHandler(auth));
 
 app.get("/", (req, res) => {
   console.log("Received a request to the root endpoint");
+  res.send({name:'abdullah'})
   res.send({ message: "Hello, World! from server " });
 });
 app.use('/v1', profileRouter)
 app.use('/v1', tutorProfileRouter)
 app.use('/v1', availabilityRouter);
 app.use('/v1', bookingRouter)
+
+
+
+app.get('/user', async (req,res) =>{
+const result = await prisma.user.findMany()
+console.log(result)
+res.send(result)
+// res.send({name:'abdullah'})
+
+})
 
 export default app;

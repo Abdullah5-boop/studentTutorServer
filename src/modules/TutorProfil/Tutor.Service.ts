@@ -24,6 +24,7 @@ return result;
 
 
 const tutorProfileCreateService= async (data: TutorProfile) => {
+    console.log('line ---- ',data)
     let result = await prisma.tutorProfile.create({
         data: data
     });
