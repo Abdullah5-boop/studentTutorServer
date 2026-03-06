@@ -35,6 +35,7 @@ function verificationEmailTemplate({
 }
 
 export const auth = betterAuth({
+  trustedOrigins: ["http://localhost:3000"],
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -42,7 +43,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-
+    callbackURL: "http://localhost:3000/",
     sendResetPassword: async ({ user, url, token }) => {
       await transporter.sendMail({
         from: '"Maddison Foo Koch" <mahmoodapurbo1@gmail.com>',

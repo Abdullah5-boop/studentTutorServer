@@ -8,10 +8,21 @@ import { tutorProfileRouter } from "./src/modules/TutorProfil/Tutor.Route";
 import { availabilityRouter } from "./src/modules/Availability/Availabilty.route";
 import { bookingRouter } from "./src/modules/Booking/Booking.route";
 import { prisma } from "./lib/prisma";
+
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin:"http://localhost:3000",
+  credentials:true
+}));
+
+
+
 app.use(express.json());
+
+
+
+
 app.all("/api/auth/*", toNodeHandler(auth));
 
 
