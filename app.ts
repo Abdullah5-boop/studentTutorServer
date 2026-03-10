@@ -8,12 +8,16 @@ import { tutorProfileRouter } from "./src/modules/TutorProfil/Tutor.Route";
 import { availabilityRouter } from "./src/modules/Availability/Availabilty.route";
 import { bookingRouter } from "./src/modules/Booking/Booking.route";
 import { prisma } from "./lib/prisma";
+import { catRout } from "./src/modules/Catagory/Cat.route";
 
 const app = express();
 
 app.use(cors({
   origin:"http://localhost:3000",
-  credentials:true
+   credentials: true,               
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+
 }));
 
 
@@ -36,6 +40,7 @@ app.use('/v1', profileRouter)
 app.use('/v1', tutorProfileRouter)
 app.use('/v1', availabilityRouter);
 app.use('/v1', bookingRouter)
+app.use("/v1", catRout)
 
 
 
