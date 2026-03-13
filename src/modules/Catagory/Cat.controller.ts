@@ -8,6 +8,7 @@ const getCategoryController = async (req: Request, res: Response) => {
     res.send(error);
   }
 };
+
 const postCategoryController = async (req: Request, res: Response) => {
   try {
 const { catName: name, catdes: description } = req.body;
