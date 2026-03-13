@@ -89,8 +89,15 @@ export const auth = betterAuth({
       role:{
         type:'string',
         required:true,
+
         defaultValue:UserRole.USER
+      },
+      UserStatus:{
+        type:'boolean',
+        required:true,
+        defaultValue:true
       }
+
     }
   }
 

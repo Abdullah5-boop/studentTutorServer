@@ -11,6 +11,7 @@ import { availabilityRouter } from "./src/modules/Availability/Availabilty.route
 import { bookingRouter } from "./src/modules/Booking/Booking.route";
 import { prisma } from "./lib/prisma";
 import { catRout } from "./src/modules/Catagory/Cat.route";
+import { userRoute } from './src/modules/Users/User.Route';
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(
   cors({
     origin: "http://localhost:3000",
     credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS","PUT"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
@@ -30,17 +31,12 @@ app.use("/v1", tutorProfileRouter);
 app.use("/v1", availabilityRouter);
 app.use("/v1", bookingRouter);
 app.use("/v1", catRout);
-app.get("/user", async (req, res) => {
-  const result = await prisma.user.findMany();
-  console.log(result);
-  res.send(result);
-  // res.send({name:'abdullah'})
-});
+app.use("/v1", userRoute)
 
 
 app.get("/",middlewares.validation("USER"), (req, res) => {
   console.log("Received a request to the root endpoint");
-  res.send({ name: "abdullah" });
+  // res.send({ name: "abdullah" });
 
 });
 

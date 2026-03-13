@@ -1,21 +1,21 @@
 import express, { NextFunction } from "express";
 import { Response, Request } from "express";
-import {auth as betterAuthApi} from'./auth'
-export enum userRole{
-    USER ="USER",
-    ADMIN="ADMIN"
+import { auth as betterAuthApi } from "./auth";
+export enum userRole {
+  USER = "USER",
+  ADMIN = "ADMIN",
 }
-declare global{
-    namespace Express{
-        interface Request{
-            user?:{
-                id:string,
-                email:string,
-                role:string,
-                emailVarified:boolean
-            }
-        }
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        email: string;
+        role: string;
+        emailVarified: boolean;
+      };
     }
+  }
 }
 
 const validation = (...roles: string[]) => {
@@ -29,7 +29,7 @@ const validation = (...roles: string[]) => {
       const session = await betterAuthApi.api.getSession({
         headers: header as any,
       });
-      
+
       const userRole = session?.user?.role;
 
       if (!session) {
@@ -39,7 +39,8 @@ const validation = (...roles: string[]) => {
       if (!roles.includes(userRole as string)) {
         return res.status(403).json({ message: "Forbidden" });
       }
-
+      if(session.user?.UserStatus==false) return res.status(403).json({ message: "this use is ban " });
+      res.send(session);
       next();
     } catch (error) {
       // 3. Now 'res' is in scope!
@@ -49,4 +50,4 @@ const validation = (...roles: string[]) => {
   };
 };
 
-export const middlewares={validation}
+export const middlewares = { validation };
