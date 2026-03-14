@@ -26,13 +26,13 @@ const validation = (...roles: string[]) => {
       console.log("middleware:", roles);
 
       const header = req.headers;
-       console.log("Raw Cookie Header:", req.headers.cookie)
+      //  console.log("Raw Cookie Header:", req.headers.cookie)
       const session = await betterAuthApi.api.getSession({
         headers: header as any,
       });
 
       const userRole = session?.user?.role;
-      console.log("session -> ",session, "header -> " ,header)
+      console.log("session -> ",session)
 
       if (!session) {
         return res.status(401).json({ message: "Unauthorized" });
