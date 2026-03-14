@@ -26,11 +26,13 @@ const validation = (...roles: string[]) => {
       console.log("middleware:", roles);
 
       const header = req.headers;
+       console.log("Raw Cookie Header:", req.headers.cookie)
       const session = await betterAuthApi.api.getSession({
         headers: header as any,
       });
 
       const userRole = session?.user?.role;
+      console.log("session -> ",session, "header -> " ,header)
 
       if (!session) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -39,7 +41,7 @@ const validation = (...roles: string[]) => {
       if (!roles.includes(userRole as string)) {
         return res.status(403).json({ message: "Forbidden" });
       }
-      if(session.user?.UserStatus==false) return res.status(403).json({ message: "this use is ban " });
+      if (session.user?.UserStatus == false) return res.status(403).json({ message: "this use is ban " });
       res.send(session);
       next();
     } catch (error) {
