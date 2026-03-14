@@ -14,7 +14,7 @@ const banAndUnbanUserController = async (req: Request, res: Response) => {
   try {
     const { id, status } = req.body;
 
-    console.log("contoller -> ", { id, status });
+    
     // console.log(req.body)
 
     const result = await userService.banAndUnbanUserService({
@@ -22,11 +22,14 @@ const banAndUnbanUserController = async (req: Request, res: Response) => {
       status: status,
     });
     console.log("_".repeat(50))
+    console.log("contoller -> ","\n", {Id: id,Status:  status });
     console.log(result)
     console.log("_".repeat(50))
-    return res.status(200).json(result);
+
+
+   res.status(200).json(result);
   } catch (error) {
-    return res.status(500).json({ message: error });
+    return res.status(500).json({name: "controller ", message: error });
   }
 };
 

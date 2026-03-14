@@ -244,6 +244,8 @@ model AvailabilitySlot {
   id        String   @id @default(uuid())
   tutorId   String
   startTime DateTime
+  subject   String
+  tag       String[]
   endTime   DateTime
   isBooked  Boolean  @default(false)
 

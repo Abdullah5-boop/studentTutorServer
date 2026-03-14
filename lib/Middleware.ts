@@ -26,6 +26,7 @@ const validation = (...roles: string[]) => {
       console.log("middleware:", roles);
 
       const header = req.headers;
+      console.log("middleware header = ",header)
       //  console.log("Raw Cookie Header:", req.headers.cookie)
       const session = await betterAuthApi.api.getSession({
         headers: header as any,
@@ -42,7 +43,7 @@ const validation = (...roles: string[]) => {
         return res.status(403).json({ message: "Forbidden" });
       }
       if (session.user?.UserStatus == false) return res.status(403).json({ message: "this use is ban " });
-      res.send(session);
+      // res.send(session);
       next();
     } catch (error) {
       // 3. Now 'res' is in scope!
