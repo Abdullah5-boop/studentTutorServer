@@ -34,6 +34,8 @@ app.use("/v1", catRout);
 app.use("/v1", userRoute)
 
 
+
+
 app.get("/",middlewares.validation("USER"), (req, res) => {
   console.log("Received a request to the root endpoint");
   // res.send({ name: "abdullah" });

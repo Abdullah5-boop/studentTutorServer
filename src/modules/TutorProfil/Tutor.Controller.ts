@@ -52,8 +52,22 @@ const tutorProfileUpdateController = async (req: any, res: any) => {
   }
 };
 
+const tutorAvailabilitySlot = async (req: any, res: any) => {
+  try {
+    let { id } = req.params
+
+    let result = await tutorProfileService.tutorAvailabilityService({ ...req.body })
+    console.log("rsdfsd",result)
+    res.send(result)
+  } catch (error) {
+    res.send({ message: "error from tutor controller", error })
+  }
+
+}
+
 export const tutorProfileController = {
   tutorProfileGetController,
   tutorProfileCreateController,
   tutorProfileUpdateController,
+  tutorAvailabilitySlot
 };
