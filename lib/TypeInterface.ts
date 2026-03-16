@@ -39,8 +39,8 @@ export interface AvailabilitySlot {
   isBooked: boolean;
 }
 export interface TutorProfile {
-  id?: string;
-
+id: string
+  userId: string;
   bio: string | null;
   hourlyRate: number;
   averageRating?: number;

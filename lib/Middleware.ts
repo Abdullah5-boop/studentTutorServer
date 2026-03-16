@@ -1,6 +1,8 @@
 import express, { NextFunction } from "express";
 import { Response, Request } from "express";
 import { auth as betterAuthApi } from "./auth";
+import { prisma } from "./prisma";
+import { tutorProfileController } from "../src/modules/TutorProfil/Tutor.Controller";
 export enum userRole {
   USER = "USER",
   ADMIN = "ADMIN",
@@ -26,14 +28,15 @@ const validation = (...roles: string[]) => {
       console.log("middleware:", roles);
 
       const header = req.headers;
-      console.log("middleware header = ",header)
+     
       //  console.log("Raw Cookie Header:", req.headers.cookie)
       const session = await betterAuthApi.api.getSession({
         headers: header as any,
       });
 
       const userRole = session?.user?.role;
-      console.log("session -> ",session)
+      const userId= session?.user.id ?session?.user.id:""
+   
 
       if (!session) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -42,6 +45,46 @@ const validation = (...roles: string[]) => {
       if (!roles.includes(userRole as string)) {
         return res.status(403).json({ message: "Forbidden" });
       }
+
+      if(userRole=="TUTOR")
+      {
+        // try{
+        //   let result = await fetch("http://localhost:5000/v1/tutorPofileExist",{
+        //     method:"GET",
+        //     body: JSON.stringify({id:userId})
+
+        //   })
+        //   console.log("_".repeat(50))
+        //   console.log(result)
+        //   console.log("_".repeat(50))
+        // } catch(error){console.log(error)}
+
+        try{
+          let result = await tutorProfileController.tutorProfileExistController(userId)
+          if(!result.status)
+          {
+            console.log("tutor profile does not exist ... ")
+            let result = await tutorProfileController.tutorProfileCreateController({
+              userId: userId,
+              bio: "demo",
+              hourlyRate: 0
+            })
+            if(result.status){
+              console.log("tutor profile successfully created ..")
+            }
+          }
+          else{
+            console.log("tutor profile exist ... ",result)
+            
+          }
+
+        } catch(error)
+        {
+          console.log(error)
+        }
+      }
+
+
       if (session.user?.UserStatus == false) return res.status(403).json({ message: "this use is ban " });
       // res.send(session);
       next();
