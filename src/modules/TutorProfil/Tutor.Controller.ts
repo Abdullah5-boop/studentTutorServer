@@ -80,13 +80,15 @@ const tutorAvailabilitySlot = async (req: any, res: any) => {
   try {
     let { id } = req.params;
     let header = req.headers;
+    console.log("start here controller...")
+    console.log("availability : ", header, "id :", id)
 
     let result = await tutorProfileService.tutorAvailabilityService({
       ...req.body,
       header,
     });
-    console.log("rsdfsd", result);
-    res.send(result);
+    console.log("tutorAvailabilitySlot controller -> ", result);
+    res.send({message:"create", result});
   } catch (error) {
     res.send({ message: "error from tutor controller", error });
   }
