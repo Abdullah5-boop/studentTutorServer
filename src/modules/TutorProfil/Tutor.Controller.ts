@@ -1,6 +1,6 @@
 import { TutorProfile } from "@/../../lib/TypeInterface";
 import { tutorProfileService } from "./Tutor.Service";
-
+import { Request, Response } from "express";
 const tutorProfileGetController = async (req: any, res: any) => {
   try {
     let result = await tutorProfileService.tutorProfileGetService(req.body);
@@ -16,20 +16,19 @@ const tutorProfileGetController = async (req: any, res: any) => {
   }
 };
 
-const tutorProfileCreateController = async (data:any) => {
+const tutorProfileCreateController = async (data: any) => {
   try {
     // Ensure 'id' is present; generate one if missing
-   
 
     let result = await tutorProfileService.tutorProfileCreateService(data);
     return { message: "tutor profile has been created ", status: true, result };
     // console.log(result);
-
   } catch (error: any) {
     console.error(error);
 
     return {
-      message: "tutor profile is not created", status: false,
+      message: "tutor profile is not created",
+      status: false,
       error: error.message,
       code: error.code,
       meta: error.meta,
@@ -54,9 +53,6 @@ const tutorProfileCreateController = async (data:any) => {
 //   }
 // };
 
-
-
-
 const tutorProfileUpdateController = async (req: any, res: any) => {
   try {
     let result = await tutorProfileService.tutorProfileUpdateService(
@@ -80,34 +76,48 @@ const tutorAvailabilitySlot = async (req: any, res: any) => {
   try {
     let { id } = req.params;
     let header = req.headers;
-    console.log("start here controller...")
-    console.log("availability : ", header, "id :", id)
+    console.log("start here controller...");
+    console.log("availability : ", header, "id :", id);
 
     let result = await tutorProfileService.tutorAvailabilityService({
       ...req.body,
       header,
     });
     console.log("tutorAvailabilitySlot controller -> ", result);
-    res.send({message:"create", result});
+    res.send({ message: "create", result });
   } catch (error) {
     res.send({ message: "error from tutor controller", error });
   }
 };
 
-const tutorProfileExistController = async (id:string) => {
+const tutorProfileExistController = async (id: string) => {
   try {
-   
     let result = await tutorProfileService.tutorProfileExistService(id);
-    return {status:true, result}
-
+    return { status: true, result };
   } catch (error) {
-    return {status:false, error}
+    return { status: false, error };
   }
 };
+
+const GettutorScheduleController = async (req: Request, res: Response) => {
+  try {
+    console.log("GettutorScheduleController...",req.TutorId)
+    
+    let result = await tutorProfileService.GettutorScheduleService(req.TutorId as string);
+    console.log(result)
+    console.log("-".repeat(50))
+    res.send(result);
+  } catch (error) {
+    console.log(error)
+    res.send(error)
+  }
+};
+
 export const tutorProfileController = {
   tutorProfileGetController,
   tutorProfileCreateController,
   tutorProfileUpdateController,
   tutorAvailabilitySlot,
   tutorProfileExistController,
+  GettutorScheduleController,
 };

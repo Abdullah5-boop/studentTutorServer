@@ -13,80 +13,6 @@ datasource db {
   provider = "postgresql"
 }
 
-// model User {
-//   id            String    @id
-//   name          String
-//   email         String
-//   role          String    @default("user")
-//   emailVerified Boolean   @default(false)
-//   image         String?
-//   createdAt     DateTime  @default(now())
-//   updatedAt     DateTime  @updatedAt
-//   sessions      Session[]
-//   accounts      Account[]
-
-//   @@unique([email])
-//   @@map("user")
-// }
-
-// model Session {
-//   id        String   @id
-//   expiresAt DateTime
-//   token     String
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-//   ipAddress String?
-//   userAgent String?
-//   userId    String
-//   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-//   @@unique([token])
-//   @@index([userId])
-//   @@map("session")
-// }
-
-// model Account {
-//   id                    String    @id
-//   accountId             String
-//   providerId            String
-//   userId                String
-//   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   accessToken           String?
-//   refreshToken          String?
-//   idToken               String?
-//   accessTokenExpiresAt  DateTime?
-//   refreshTokenExpiresAt DateTime?
-//   scope                 String?
-//   password              String?
-//   createdAt             DateTime  @default(now())
-//   updatedAt             DateTime  @updatedAt
-
-//   @@index([userId])
-//   @@map("account")
-// }
-
-// model Verification {
-//   id         String   @id
-//   identifier String
-//   value      String
-//   expiresAt  DateTime
-//   createdAt  DateTime @default(now())
-//   updatedAt  DateTime @updatedAt
-
-//   @@index([identifier])
-//   @@map("verification")
-// }
-
-// =========================================================
-
-// ======================================
-// Prisma Schema – SkillBridge (Full)
-// ======================================
-
-//////////////////////
-// ENUMS
-//////////////////////
-
 enum UserRole {
   USER
   TUTOR
@@ -209,41 +135,49 @@ model Category {
 }
 
 model Booking {
-  id        String        @id @default(uuid())
+  id        String @id @default(uuid())
   studentId String
   tutorId   String
-  startTime DateTime
-  endTime   DateTime
+  slotId    String // remove @unique to allow multiple students to book same slot
+
   status    BookingStatus @default(PENDING)
   createdAt DateTime      @default(now())
 
-  student User         @relation("StudentBookings", fields: [studentId], references: [id])
-  tutor   TutorProfile @relation(fields: [tutorId], references: [id])
-  review  Review?
-}
+  student User             @relation("StudentBookings", fields: [studentId], references: [id])
+  tutor   TutorProfile     @relation(fields: [tutorId], references: [id])
+  slot    AvailabilitySlot @relation(fields: [slotId], references: [id])
 
-model Review {
-  id        String   @id @default(uuid())
-  bookingId String   @unique
-  studentId String
-  tutorId   String
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
 
-  booking Booking      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  student User         @relation("StudentReviews", fields: [studentId], references: [id])
-  tutor   TutorProfile @relation(fields: [tutorId], references: [id])
 }
 
 model AvailabilitySlot {
   id        String   @id @default(uuid())
   tutorId   String
   startTime DateTime
+  endTime   DateTime
   subject   String
   tag       String[]
-  endTime   DateTime
   isBooked  Boolean  @default(false)
 
-  tutor TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  tutor    TutorProfile @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  bookings Booking[] // virtual relation; multiple bookings possible
+  reviews  Review[]
+}
+
+model Review {
+  id        String   @id @default(uuid())
+ 
+  studentId String
+  slotId    String   // ✅ use consistent naming (camelCase)
+  tutorId   String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+
+  student User         @relation("StudentReviews", fields: [studentId], references: [id])
+  tutor   TutorProfile @relation(fields: [tutorId], references: [id])
+
+  // ✅ Proper relation
+  availabilitySlot AvailabilitySlot @relation(fields: [slotId], references: [id])
 }

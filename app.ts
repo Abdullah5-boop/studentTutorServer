@@ -12,6 +12,7 @@ import { bookingRouter } from "./src/modules/Booking/Booking.route";
 import { prisma } from "./lib/prisma";
 import { catRout } from "./src/modules/Catagory/Cat.route";
 import { userRoute } from './src/modules/Users/User.Route';
+import { reviewRoute } from './src/modules/Review/Review.route';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/v1", availabilityRouter);
 app.use("/v1", bookingRouter);
 app.use("/v1", catRout);
 app.use("/v1", userRoute)
+app.use("/v1", reviewRoute)
 
 
 

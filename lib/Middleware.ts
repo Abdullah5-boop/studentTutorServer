@@ -3,6 +3,7 @@ import { Response, Request } from "express";
 import { auth as betterAuthApi } from "./auth";
 import { prisma } from "./prisma";
 import { tutorProfileController } from "../src/modules/TutorProfil/Tutor.Controller";
+import { error } from "node:console";
 export enum userRole {
   USER = "USER",
   ADMIN = "ADMIN",
@@ -10,12 +11,13 @@ export enum userRole {
 declare global {
   namespace Express {
     interface Request {
-      user?: {
+      User?: {
         id: string;
         email: string;
         role: string;
-        emailVarified: boolean;
+        emailVerified?: boolean;
       };
+      TutorId?: string;
     }
   }
 }
@@ -27,66 +29,58 @@ const validation = (...roles: string[]) => {
       // 2. The logic (and the try-catch) belongs inside here
       console.log("middleware:", roles);
 
-      const header = req.headers;
-     
-      //  console.log("Raw Cookie Header:", req.headers.cookie)
+      const header = req?.headers;
+
+      console.log("Raw Cookie Header:", req.headers);
       const session = await betterAuthApi.api.getSession({
         headers: header as any,
       });
 
       const userRole = session?.user?.role;
-      const userId= session?.user.id ?session?.user.id:""
-   
+      const userId = session?.user.id ? session?.user.id : "";
 
+      console.log("session ->", session);
       if (!session) {
         return res.status(401).json({ message: "Unauthorized" });
       }
+      req.User = session?.user;
+
 
       if (!roles.includes(userRole as string)) {
         return res.status(403).json({ message: "Forbidden" });
       }
 
-      if(userRole=="TUTOR")
-      {
-        // try{
-        //   let result = await fetch("http://localhost:5000/v1/tutorPofileExist",{
-        //     method:"GET",
-        //     body: JSON.stringify({id:userId})
+      if (userRole == "TUTOR") {
+        console.log("tutor starting ...");
+        try {
+          let result =
+            await tutorProfileController.tutorProfileExistController(userId);
 
-        //   })
-        //   console.log("_".repeat(50))
-        //   console.log(result)
-        //   console.log("_".repeat(50))
-        // } catch(error){console.log(error)}
-
-        try{
-          let result = await tutorProfileController.tutorProfileExistController(userId)
-          if(!result.status)
-          {
-            console.log("tutor profile does not exist ... ")
-            let result = await tutorProfileController.tutorProfileCreateController({
-              userId: userId,
-              bio: "demo",
-              hourlyRate: 0
-            })
-            if(result.status){
-              console.log("tutor profile successfully created ..")
+          if (!result.status) {
+            console.log("tutor profile does not exist ... ");
+            let result =
+              await tutorProfileController.tutorProfileCreateController({
+                userId: userId,
+                bio: "demo",
+                hourlyRate: 0,
+              });
+            if (result.status) {
+              req.TutorId = result.result?.id as string;
+              console.log("tutor profile successfully created ..");
+            } else {
+              throw error("tutor profile not created..");
             }
+          } else {
+            req.TutorId = result.result?.id as string;
+            console.log("tutor profile exist ... ", result);
           }
-          else{
-            console.log("tutor profile exist ... ",result)
-    
-            
-          }
-
-        } catch(error)
-        {
-          console.log(error)
+        } catch (error) {
+          console.log(error);
         }
       }
 
-
-      if (session.user?.UserStatus == false) return res.status(403).json({ message: "this use is ban " });
+      if (session.user?.UserStatus == false)
+        return res.status(403).json({ message: "this use is ban " });
       // res.send(session);
       next();
     } catch (error) {

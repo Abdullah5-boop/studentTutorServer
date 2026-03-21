@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { ProfileServices } from "./Profile.service";
 const profileGetController = async (req:Request, res:Response) => {
-    const {email} : {email:string}= req.body
+    const email = req.User?.email || ""
+    console.log("email Controller : ", email)
 
     try {
         // Simulate fetching profile data from a database
@@ -31,7 +32,21 @@ const profileUpdateController= async (req:Request, res:Response) => {
         res.status(500).json({ error: "Failed to update profile data" });
     }
 }
+
+const StudentProfileUpdateController= async (req:Request, res:Response) => {
+     // Assuming the user ID is passed as a URL parameter
+     let userId = req.User?.id ||""
+  
+    const payload = req.body; // The fields to update
+    try{
+        let result =  await ProfileServices.StudentProfileUpdateService(userId, payload)
+        res.send(result);
+    } catch(error){
+        res.status(500).json({ txt: "Failed to update profile data",error });
+    }
+}
+
 export const profileController={
     profileGetController,
-    profileUpdateController
+    profileUpdateController, StudentProfileUpdateController
 }
