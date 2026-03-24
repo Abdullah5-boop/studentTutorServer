@@ -44,8 +44,19 @@ const GetOneAvailabilityController = async (req: Request, res: Response) => {
   } catch (error) {}
 };
 
+const getAllCatController= async(req: Request, res: Response) =>{
+  try{
+    let result = await availabilityServer.getAllCatService()
+    res.send(result)
+  } catch(error){
+    console.log(error)
+    res.send(error)
+    
+  }
+}
+
 export const availabilityController = {
   avilabilityGetController,
   avilabilityCreateController,
-  avilabilityDeleteController,GetOneAvailabilityController
+  avilabilityDeleteController,GetOneAvailabilityController,getAllCatController
 };

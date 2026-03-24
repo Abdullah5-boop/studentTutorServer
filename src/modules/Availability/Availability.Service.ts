@@ -2,7 +2,10 @@ import { AvailabilitySlot } from "../../../generated/prisma/client";
 import { prisma } from "../../../lib/prisma";
 
 const availabilityGetService = async () => {
-  const availability = await prisma.availabilitySlot.findMany();
+  const availability = await prisma.availabilitySlot.findMany({
+    include:{tutor:true}
+  });
+  console.log(availability)
   return availability;
 };
 
@@ -17,6 +20,7 @@ const availabilityDeleteService = async (id: string) => {
     where: {
       id: id,
     },
+
   });
 };
 
@@ -27,8 +31,19 @@ const getOneAvailability = async (id: string) => {
   return Result;
 };
 
+
+const getAllCatService= async()=>{
+  let result = await prisma.availabilitySlot.findMany({
+        select:{subject:true}
+    })
+    console.log(result)
+    return result
+}
+
+
+
 export const availabilityServer = {
   availabilityGetService,
   availabilityCreateService,
-  availabilityDeleteService, getOneAvailability
+  availabilityDeleteService, getOneAvailability,getAllCatService
 };
